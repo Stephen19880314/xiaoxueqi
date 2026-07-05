@@ -52,6 +52,10 @@ Thumbs.db
 desktop.ini
 $RECYCLE.BIN/
 
+# === 文档 ===
+*.docx
+*.doc
+
 # === 临时文件 ===
 *.swp
 *.swo
