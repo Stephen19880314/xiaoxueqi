@@ -1,0 +1,63 @@
+# === 编译产物 ===
+*.exe
+*.out
+*.o
+*.obj
+*.dll
+*.so
+*.a
+*.lib
+*.lo
+*.la
+*.dylib
+
+# === 调试 & 分析 ===
+*.pdb
+*.ilk
+*.exp
+*.suo
+*.user
+*.vcxproj.filters
+*.idb
+*.aps
+*.ncb
+*.sdf
+*.ipch
+
+# === Visual Studio ===
+.vs/
+Debug/
+Release/
+x64/
+x86/
+[Bb]uild/
+out/
+
+# === CMake ===
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake-build-*/
+Testing/
+
+# === VS Code ===
+.vscode/
+
+# === CLion ===
+.idea/
+
+# === 系统文件 ===
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# === 临时文件 ===
+*.swp
+*.swo
+*.tmp
+*.log
+*~
+
+# === macOS ===
+.DS_Store
