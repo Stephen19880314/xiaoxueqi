@@ -1,0 +1,27 @@
+#!/bin/bash
+# pre-commit hook: 提交前检查
+
+# 1. 阻止提交 .exe .out 等编译产物
+blocked=$(git diff --cached --name-only | grep -E '\.(exe|out|obj|o)$')
+if [ -n "$blocked" ]; then
+    echo "❌ 禁止提交编译产物，请先删除或加入 .gitignore："
+    echo "$blocked"
+    exit 1
+fi
+
+# 2. 阻止提交超过 1MB 的大文件
+big=$(git diff --cached --name-only | xargs ls -l 2>/dev/null | awk '$5 > 1048576 {print $9, $5}')
+if [ -n "$big" ]; then
+    echo "⚠️  检测到大文件（>1MB），确认要提交吗？"
+    echo "$big"
+fi
+
+# 3. 检测是否遗留调试代码（C 文件中的 printf/cerr debug）
+debug=$(git diff --cached --name-only '*.c' '*.cpp' '*.h' | xargs grep -n 'printf.*debug\|cerr.*debug\|cout.*debug' 2>/dev/null)
+if [ -n "$debug" ]; then
+    echo "⚠️  检测到可能的调试代码："
+    echo "$debug"
+fi
+
+echo "✅ pre-commit 检查通过"
+exit 0

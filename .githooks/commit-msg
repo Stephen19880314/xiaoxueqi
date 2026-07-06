@@ -1,0 +1,25 @@
+#!/bin/bash
+# commit-msg hook: 检查提交信息格式
+
+msg=$(cat "$1")
+
+# 1. 不允许空提交信息
+if [ -z "$msg" ]; then
+    echo "❌ 提交信息不能为空！"
+    exit 1
+fi
+
+# 2. 最短 5 个字符
+if [ ${#msg} -lt 5 ]; then
+    echo "❌ 提交信息太短（至少 5 个字符）"
+    exit 1
+fi
+
+# 3. 建议格式提醒（不阻止，只提醒）
+if ! echo "$msg" | head -1 | grep -qE '^(feat|fix|chore|docs|test|refactor|style):'; then
+    echo "💡 建议格式：类型: 描述"
+    echo "   类型: feat(新功能) fix(修复) chore(杂项) docs(文档) test(测试) refactor(重构)"
+fi
+
+echo "✅ commit-msg 检查通过"
+exit 0
