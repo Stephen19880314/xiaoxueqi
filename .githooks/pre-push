@@ -1,0 +1,40 @@
+#!/bin/bash
+# pre-push hook: 推送前检查
+
+# 1. 检测是否有未提交的改动
+unstaged=$(git status --porcelain)
+if [ -n "$unstaged" ]; then
+    echo "⚠️  本地还有未提交的改动："
+    echo "$unstaged"
+    echo ""
+    read -p "继续推送吗？(y/n) " answer
+    [ "$answer" != "y" ] && exit 1
+fi
+
+# 2. 检查是否有 TODO/FIXME 标记提醒
+changes=$(git diff --name-only HEAD~1..HEAD 2>/dev/null)
+if [ -n "$changes" ]; then
+    todos=$(echo "$changes" | xargs grep -n 'TODO\|FIXME\|HACK' 2>/dev/null)
+    if [ -n "$todos" ]; then
+        echo "⚠️  本次提交包含 TODO/FIXME 标记："
+        echo "$todos"
+    fi
+fi
+
+# 3. 检查 .c/.cpp 文件是否有简单的语法问题
+cfiles=$(git diff --name-only HEAD~1..HEAD | grep -E '\.(c|cpp|h)$')
+if [ -n "$cfiles" ]; then
+    for f in $cfiles; do
+        # 检查括号是否匹配
+        open=$(grep -o '{' "$f" 2>/dev/null | wc -l)
+        close=$(grep -o '}' "$f" 2>/dev/null | wc -l)
+        if [ "$open" != "$close" ]; then
+            echo "❌ $f: 花括号不匹配 ({ $open vs } $close)"
+            exit 1
+        fi
+    done
+    echo "✅ $cfiles 花括号匹配检查通过"
+fi
+
+echo "✅ pre-push 检查通过"
+exit 0
